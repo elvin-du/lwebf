@@ -6,31 +6,32 @@ import (
 
 type parameters map[string]interface{}
 
-type context struct {
-	ip             string
-	ResponseWriter http.ResponseWriter
-	Request        *http.Request
-	Params         parameters
+type Context struct {
+	ip     string
+	RW     http.ResponseWriter
+	Req    *http.Request
+	Params parameters
 }
 
-func NewContext(rw http.ResponseWriter, req *http.Request) *context {
+func NewContext(rw http.ResponseWriter, req *http.Request) *Context {
 	p := params(req)
-	return &context{getIP(req), rw, req, p}
+	return &Context{getIP(req), rw, req, p}
 }
 
 func params(req *http.Request) parameters {
 	req.ParseForm()
-	if len(req.Form) > 0 {
-		p := make(parameters)
-		for k, v := range req.Form {
-			p[k] = v
-		}
-		return p
+	if len(req.Form) <= 0 {
+		return nil
 	}
 
-	return nil
+	p := make(parameters)
+	for k, v := range req.Form {
+		p[k] = v
+	}
+
+	return p
 }
 
-func (this *context) IP() string {
+func (this *Context) IP() string {
 	return this.ip
 }

@@ -5,6 +5,7 @@ import (
 	"net/http"
 )
 
-func Run() {
-	log.Fatal(http.ListenAndServe("/", http.HandlerFunc(router)))
+func Run(addr string) {
+	log.Println(addr)
+	log.Fatal(http.ListenAndServe(addr, http.HandlerFunc(router)))
 }
