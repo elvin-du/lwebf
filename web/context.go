@@ -1,21 +1,22 @@
 package web
 
 import (
+	"log"
 	"net/http"
 )
 
 type parameters map[string]interface{}
 
 type Context struct {
-	ip     string
-	RW     http.ResponseWriter
+	http.ResponseWriter
 	Req    *http.Request
+	ip     string
 	Params parameters
 }
 
 func NewContext(rw http.ResponseWriter, req *http.Request) *Context {
 	p := params(req)
-	return &Context{getIP(req), rw, req, p}
+	return &Context{rw, req, getIP(req), p}
 }
 
 func params(req *http.Request) parameters {
@@ -34,4 +35,12 @@ func params(req *http.Request) parameters {
 
 func (this *Context) IP() string {
 	return this.ip
+}
+
+func (this *Context) Abort(status int, body string) {
+	this.WriteHeader(status)
+	_, err := this.Write([]byte(body))
+	if nil != err {
+		log.Println(err)
+	}
 }

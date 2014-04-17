@@ -17,10 +17,17 @@ var (
 	gControllers = make(map[string]reflect.Value)
 )
 
-func Add(i interface{}) {
-	key := reflect.TypeOf(i).String()
-	val := reflect.ValueOf(i)
-	gControllers[key] = val
+func Add(cs ...interface{}) {
+	for _, c := range cs {
+		t := reflect.TypeOf(c)
+
+		n := t.Name()
+		if t.Kind() == reflect.Ptr {
+			n = t.Elem().Name()
+		}
+
+		gControllers[n] = reflect.ValueOf(c)
+	}
 }
 
 var (
